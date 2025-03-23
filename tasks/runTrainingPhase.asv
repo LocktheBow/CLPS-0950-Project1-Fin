@@ -1,0 +1,206 @@
+function runTrainingPhase(window, tasks, screenInfo)
+    % Training phase with improved error handling and display
+    
+    try
+        % Display training instructions
+        Screen('TextSize', window, 36);
+        DrawFormattedText(window, 'Training Phase', 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+        DrawFormattedText(window, 'You will now see examples of each task type with explanations.', 'center', screenInfo.screenYpixels * 0.4, screenInfo.black);
+        DrawFormattedText(window, 'Study these examples carefully to improve your performance.', 'center', screenInfo.screenYpixels * 0.5, screenInfo.black);
+        DrawFormattedText(window, 'Press any key to continue...', 'center', screenInfo.screenYpixels * 0.7, screenInfo.black);
+        Screen('Flip', window);
+        KbStrokeWait;
+        WaitSecs(0.5);
+        
+        % ----- SIMILARITIES TRAINING -----
+        % Check if we have enough examples
+        if length(tasks.similarities) < 2
+            error('Not enough similarities tasks available for training');
+        end
+        
+        Screen('TextSize', window, 36);
+        DrawFormattedText(window, 'SIMILARITIES TRAINING', 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+        DrawFormattedText(window, 'Goal: Identify how two words or concepts are related', 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+        
+        % Training technique explanation
+        explanation = ['Strategy: Look for the most fundamental or essential category that both items share.\n\n' ...
+                      'Avoid focusing on surface similarities or specific details.\n\n' ...
+                      'For example, when comparing "car" and "boat", focus on "both are vehicles" rather than "both have engines".'];
+        
+        DrawFormattedText(window, explanation, 'center', 'center', screenInfo.black);
+        DrawFormattedText(window, 'Press any key to see examples...', 'center', screenInfo.screenYpixels * 0.8, screenInfo.black);
+        Screen('Flip', window);
+        KbStrokeWait;
+        WaitSecs(0.5);
+        
+        % Show examples for similarities
+        for i = 1:2
+            if i <= length(tasks.similarities)
+                exampleTask = tasks.similarities(i);
+                
+                Screen('TextSize', window, 36);
+                DrawFormattedText(window, ['SIMILARITIES EXAMPLE ' num2str(i)], 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+                
+                promptText = sprintf('How are "%s" and "%s" alike?', exampleTask.word1, exampleTask.word2);
+                DrawFormattedText(window, promptText, 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+                
+                % Display options with correct answer highlighted
+                yPos = screenInfo.screenYpixels * 0.4;
+                for j = 1:length(exampleTask.options)
+                    optionText = [num2str(j) '. ' exampleTask.options{j}];
+                    
+                    % Highlight correct answer
+                    if j == exampleTask.correctAnswer
+                        optionText = [optionText ' ✓ (CORRECT)'];
+                        DrawFormattedText(window, optionText, 'center', yPos, [0 0.7 0]); % Green for correct
+                    else
+                        DrawFormattedText(window, optionText, 'center', yPos, screenInfo.black);
+                    end
+                    yPos = yPos + 40;
+                }
+                
+                % Explanation
+                explanation = ['Explanation: ' exampleTask.options{exampleTask.correctAnswer} ' is correct because it\n' ...
+                               'identifies the fundamental, abstract category that both items belong to.'];
+                
+                DrawFormattedText(window, explanation, 'center', screenInfo.screenYpixels * 0.7, screenInfo.black);
+                DrawFormattedText(window, 'Press any key to continue...', 'center', screenInfo.screenYpixels * 0.9, screenInfo.black);
+                Screen('Flip', window);
+                KbStrokeWait;
+                WaitSecs(0.5);
+            end
+        end
+        
+        % ----- VOCABULARY TRAINING -----
+        if length(tasks.vocabulary) < 2
+            error('Not enough vocabulary tasks available for training');
+        end
+        
+        Screen('TextSize', window, 36);
+        DrawFormattedText(window, 'VOCABULARY TRAINING', 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+        DrawFormattedText(window, 'Goal: Understand the meaning of words', 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+        
+        % Training technique explanation
+        explanation = ['Strategy: Focus on the primary or most common meaning of the word.\n\n' ...
+                      'Look for contextual clues in the word itself (prefixes, suffixes, root words).\n\n' ...
+                      'Eliminate options that are clearly opposite or unrelated to the word.'];
+        
+        DrawFormattedText(window, explanation, 'center', 'center', screenInfo.black);
+        DrawFormattedText(window, 'Press any key to see examples...', 'center', screenInfo.screenYpixels * 0.8, screenInfo.black);
+        Screen('Flip', window);
+        KbStrokeWait;
+        WaitSecs(0.5);
+        
+        % Show examples for vocabulary
+        for i = 1:2
+            if i <= length(tasks.vocabulary)
+                exampleTask = tasks.vocabulary(i);
+                
+                Screen('TextSize', window, 36);
+                DrawFormattedText(window, ['VOCABULARY EXAMPLE ' num2str(i)], 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+                
+                promptText = sprintf('What does "%s" mean?', exampleTask.word);
+                DrawFormattedText(window, promptText, 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+                
+                % Display options with correct answer highlighted
+                yPos = screenInfo.screenYpixels * 0.4;
+                for j = 1:length(exampleTask.options)
+                    optionText = [num2str(j) '. ' exampleTask.options{j}];
+                    
+                    % Highlight correct answer
+                    if j == exampleTask.correctAnswer
+                        optionText = [optionText ' ✓ (CORRECT)'];
+                        DrawFormattedText(window, optionText, 'center', yPos, [0 0.7 0]); % Green for correct
+                    else
+                        DrawFormattedText(window, optionText, 'center', yPos, screenInfo.black);
+                    end
+                    yPos = yPos + 40;
+                end
+                
+                % Explanation
+                explanation = ['Explanation: ' exampleTask.options{exampleTask.correctAnswer} ' is correct because it\n' ...
+                               'captures the primary meaning of the word as used in standard contexts.'];
+                
+                DrawFormattedText(window, explanation, 'center', screenInfo.screenYpixels * 0.7, screenInfo.black);
+                DrawFormattedText(window, 'Press any key to continue...', 'center', screenInfo.screenYpixels * 0.9, screenInfo.black);
+                Screen('Flip', window);
+                KbStrokeWait;
+                WaitSecs(0.5);
+            end
+        end
+        
+        % ----- INFORMATION TRAINING -----
+        if length(tasks.information) < 2
+            error('Not enough information tasks available for training');
+        end
+        
+        Screen('TextSize', window, 36);
+        DrawFormattedText(window, 'INFORMATION TRAINING', 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+        DrawFormattedText(window, 'Goal: Recall general knowledge facts', 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+        
+        % Training technique explanation
+        explanation = ['Strategy: Draw upon your existing knowledge base.\n\n' ...
+                      'Use process of elimination when you''re unsure.\n\n' ...
+                      'Look for logical connections between the question and possible answers.'];
+        
+        DrawFormattedText(window, explanation, 'center', 'center', screenInfo.black);
+        DrawFormattedText(window, 'Press any key to see examples...', 'center', screenInfo.screenYpixels * 0.8, screenInfo.black);
+        Screen('Flip', window);
+        KbStrokeWait;
+        WaitSecs(0.5);
+        
+        % Show examples for information
+        for i = 1:2
+            if i <= length(tasks.information)
+                exampleTask = tasks.information(i);
+                
+                Screen('TextSize', window, 36);
+                DrawFormattedText(window, ['INFORMATION EXAMPLE ' num2str(i)], 'center', screenInfo.screenYpixels * 0.2, screenInfo.black);
+                
+                DrawFormattedText(window, exampleTask.question, 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+                
+                % Display options with correct answer highlighted
+                yPos = screenInfo.screenYpixels * 0.4;
+                for j = 1:length(exampleTask.options)
+                    optionText = [num2str(j) '. ' exampleTask.options{j}];
+                    
+                    % Highlight correct answer
+                    if j == exampleTask.correctAnswer
+                        optionText = [optionText ' ✓ (CORRECT)'];
+                        DrawFormattedText(window, optionText, 'center', yPos, [0 0.7 0]); % Green for correct
+                    else
+                        DrawFormattedText(window, optionText, 'center', yPos, screenInfo.black);
+                    end
+                    yPos = yPos + 40;
+                end
+                
+                % Explanation
+                explanation = ['Explanation: ' exampleTask.options{exampleTask.correctAnswer} ' is correct.\n' ...
+                               'This type of question tests your ability to recall factual information from memory.'];
+                
+                DrawFormattedText(window, explanation, 'center', screenInfo.screenYpixels * 0.7, screenInfo.black);
+                DrawFormattedText(window, 'Press any key to continue...', 'center', screenInfo.screenYpixels * 0.9, screenInfo.black);
+                Screen('Flip', window);
+                KbStrokeWait;
+                WaitSecs(0.5);
+            end
+        end
+        
+        % Training completion message
+        Screen('TextSize', window, 36);
+        DrawFormattedText(window, 'Training Phase Complete', 'center', screenInfo.screenYpixels * 0.4, screenInfo.black);
+        DrawFormattedText(window, 'You are now ready to practice these skills.', 'center', screenInfo.screenYpixels * 0.5, screenInfo.black);
+        DrawFormattedText(window, 'Press any key to continue to the practice phase...', 'center', screenInfo.screenYpixels * 0.7, screenInfo.black);
+        Screen('Flip', window);
+        KbStrokeWait;
+        WaitSecs(0.5);
+    
+    catch err
+        % Detailed error reporting
+        fprintf('Error in runTrainingPhase: %s\n', err.message);
+        if ~isempty(err.stack)
+            fprintf('Error occurred at line %d\n', err.stack(1).line);
+        end
+        rethrow(err);
+    end
+end

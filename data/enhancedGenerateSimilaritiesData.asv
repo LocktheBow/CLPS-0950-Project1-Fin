@@ -1,0 +1,146 @@
+function similarities = enhancedGenerateSimilaritiesData()
+% ENHANCEDGENERATESIMILARITIESDATA Creates an expanded set of similarity word pairs
+%
+% This function generates a larger bank of word pairs with their relationships
+% for the Similarities task to ensure minimal repetition across test phases.
+%
+% Returns:
+%   similarities - Structure with pairs, relationships, and options
+
+% Initialize structure
+similarities = struct();
+
+% Expanded set of word pairs with relationships
+similarities.pairs = {
+    {'dog', 'cat'}; 
+    {'boat', 'ship'}; 
+    {'river', 'lake'};
+    {'pen', 'pencil'}; 
+    {'chair', 'table'}; 
+    {'shirt', 'pants'};
+    {'sun', 'moon'}; 
+    {'doctor', 'nurse'}; 
+    {'hammer', 'nail'};
+    {'piano', 'guitar'};
+    {'apple', 'orange'};
+    {'car', 'bus'};
+    {'telephone', 'computer'};
+    {'knife', 'fork'};
+    {'teacher', 'professor'};
+    {'foot', 'hand'};
+    {'lamp', 'candle'};
+    {'watch', 'clock'};
+    {'mountain', 'hill'};
+    {'cup', 'glass'};
+    {'bread', 'cake'};
+    {'butterfly', 'moth'};
+    {'violin', 'cello'};
+    {'novel', 'poem'};
+    {'painting', 'sculpture'};
+};
+similarities.pairs{end+1} = {'library', 'museum'};
+similarities.pairs{end+1} = {'bicycle', 'skateboard'};
+similarities.pairs{end+1} = {'lightning', 'fire'};
+
+similarities.relationships = {
+    'both are animals'; 
+    'both are water vessels'; 
+    'both are bodies of water';
+    'both are writing instruments'; 
+    'both are furniture'; 
+    'both are clothing';
+    'both are celestial bodies'; 
+    'both are medical professionals'; 
+    'both are used in construction';
+    'both are musical instruments';
+    'both are fruits';
+    'both are vehicles';
+    'both are communication devices';
+    'both are eating utensils';
+    'both are educators';
+    'both are body parts';
+    'both provide light';
+    'both tell time';
+    'both are landforms';
+    'both are drinking vessels';
+    'both are baked goods';
+    'both are insects';
+    'both are string instruments';
+    'both are literary works';
+    'both are art forms';
+};
+similarities.relationships{end+1} = 'both are places that preserve knowledge';
+similarities.relationships{end+1} = 'both are human-powered transportation devices';
+similarities.relationships{end+1} = 'both are natural forms of energy release';
+
+% Generate multiple-choice options
+similarities.options = cell(length(similarities.pairs), 1);
+similarities.correctIndices = zeros(length(similarities.pairs), 1);
+
+for i = 1:length(similarities.pairs)
+    correct = similarities.relationships{i};
+    
+    % Create plausible but incorrect options based on item type
+    if i == 1 % dog, cat
+        incorrect = {'both have tails', 'both are pets', 'both have fur'};
+    elseif i == 2 % boat, ship
+        incorrect = {'both float', 'both have motors', 'both transport people'};
+    elseif i == 3 % river, lake
+        incorrect = {'both contain fish', 'both have water', 'both are for recreation'};
+    elseif i == 4 % pen, pencil
+        incorrect = {'both leave marks', 'both have points', 'both are held in hand'};
+    elseif i == 5 % chair, table
+        incorrect = {'both have legs', 'both are made of wood', 'both are for eating'};
+    elseif i == 6 % shirt, pants
+        incorrect = {'both have fabric', 'both are worn daily', 'both protect from elements'};
+    elseif i == 7 % sun, moon
+        incorrect = {'both appear in sky', 'both provide light', 'both are round'};
+    elseif i == 8 % doctor, nurse
+        incorrect = {'both work in hospitals', 'both help patients', 'both wear uniforms'};
+    elseif i == 9 % hammer, nail
+        incorrect = {'both are made of metal', 'both are tools', 'both are hard'};
+    elseif i == 10 % piano, guitar
+        incorrect = {'both have strings', 'both make noise', 'both are played by hand'};
+    elseif i == 11 % apple, orange
+        incorrect = {'both are round', 'both grow on trees', 'both have seeds'};
+    elseif i == 12 % car, bus
+        incorrect = {'both have wheels', 'both have engines', 'both use fuel'};
+    elseif i == 13 % telephone, computer
+        incorrect = {'both use electricity', 'both have screens', 'both connect to internet'};
+    elseif i == 14 % knife, fork
+        incorrect = {'both are made of metal', 'both have handles', 'both are silverware'};
+    elseif i == 15 % teacher, professor
+        incorrect = {'both grade papers', 'both give lectures', 'both work with students'};
+    elseif i == 16 % foot, hand
+        incorrect = {'both have fingers/toes', 'both have nails', 'both are used for touching'};
+    elseif i == 17 % lamp, candle
+        incorrect = {'both get hot', 'both use electricity', 'both are household items'};
+    elseif i == 18 % watch, clock
+        incorrect = {'both have hands', 'both tick', 'both have numbers'};
+    elseif i == 19 % mountain, hill
+        incorrect = {'both have peaks', 'both are tall', 'both have slopes'};
+    elseif i == 20 % cup, glass
+        incorrect = {'both are breakable', 'both have handles', 'both hold hot liquids'};
+    elseif i == 21 % bread, cake
+        incorrect = {'both contain flour', 'both are sweet', 'both are desserts'};
+    elseif i == 22 % butterfly, moth
+        incorrect = {'both are colorful', 'both are attracted to light', 'both have antennae'};
+    elseif i == 23 % violin, cello
+        incorrect = {'both have four strings', 'both use bows', 'both are wooden'};
+    elseif i == 24 % novel, poem
+        incorrect = {'both use words', 'both have authors', 'both tell stories'};
+    else % painting, sculpture
+        incorrect = {'both are created by artists', 'both are displayed in museums', 'both are expensive'};
+    end
+    
+    % Randomize order with correct answer
+    options = [correct, incorrect];
+    randomOrder = randperm(length(options));
+    similarities.options{i} = options(randomOrder);
+    
+    % Keep track of correct answer index for scoring
+    similarities.correctIndices(i) = find(strcmp(similarities.options{i}, correct));
+end
+
+fprintf('Enhanced similarities data generated with %d pairs.\n', length(similarities.pairs));
+end

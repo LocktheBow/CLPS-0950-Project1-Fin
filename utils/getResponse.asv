@@ -1,0 +1,97 @@
+function [response, respTime] = getResponse(window, promptText, options, screenInfo)
+% GETRESPONSE - Captures multiple choice responses
+
+% Clear previous screen content
+Screen('Flip', window);
+
+% Display the prompt text
+Screen('TextSize', window, 36);
+DrawFormattedText(window, promptText, 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+
+% Display the options
+yPos = screenInfo.screenYpixels * 0.4;
+for i = 1:length(options)
+    optionText = [num2str(i) '. ' options{i}];
+    DrawFormattedText(window, optionText, 'center', yPos, screenInfo.black);
+    yPos = yPos + 40;
+end
+
+% Add clearer instructions
+DrawFormattedText(window, 'Press number keys (1-4) to select an answer', 'center', screenInfo.screenYpixels * 0.8, screenInfo.black);
+DrawFormattedText(window, 'Press ESC to exit at any time', 'center', screenInfo.screenYpixels * 0.85, screenInfo.black);
+
+% Show everything on screen
+Screen('Flip', window);
+
+% Record start time
+startTime = GetSecs();
+
+% Wait for response - IMPROVED KEY DETECTION
+responseGiven = false;
+while ~responseGiven
+    [keyIsDown, secs, keyCode] = KbCheck();
+    
+    if keyIsDown
+        % Convert keyCode to name
+        keyName = KbName(keyCode);
+        
+        % Better handling for number keys (handles both regular and keypad)
+        if iscell(keyName)
+            % Multiple keys pressed, check each one
+            for k = 1:length(keyName)
+                keyStr = keyName{k};
+                % Check for number keys 1-9
+                for num = 1:min(length(options), 9)
+                    if strcmp(keyStr, num2str(num)) || strcmp(keyStr, ['KP_' num2str(num)])
+                        response = num;
+                        responseGiven = true;
+                        break;
+                    end
+                end
+                if responseGiven
+                    break;
+                end
+                
+                % Check for escape key
+                if strcmp(keyStr, 'ESCAPE')
+                    sca;
+                    error('Program terminated by user (ESC key pressed)');
+                end
+            end
+        else
+            % Single key pressed
+            keyStr = keyName;
+            % Check for number keys 1-9
+            for num = 1:min(length(options), 9)
+                if strcmp(keyStr, num2str(num)) || strcmp(keyStr, ['KP_' num2str(num)])
+                    response = num;
+                    responseGiven = true;
+                    break;
+                end
+            end
+            
+            % Check for escape key
+            if strcmp(keyStr, 'ESCAPE')
+                sca;
+                error('Program terminated by user (ESC key pressed)');
+            end
+        end
+        
+        % Wait until all keys are released
+        KbReleaseWait;
+    end
+end
+
+% Calculate response time
+respTime = GetSecs() - startTime;
+
+% Pause briefly to prevent key bounce
+WaitSecs(0.2);
+
+% Provide visual feedback that a key was pressed
+Screen('TextSize', window, 36);
+DrawFormattedText(window, promptText, 'center', screenInfo.screenYpixels * 0.3, screenInfo.black);
+DrawFormattedText(window, 'Response recorded...', 'center', screenInfo.screenYpixels * 0.6, screenInfo.black);
+Screen('Flip', window);
+WaitSecs(0.3);
+end

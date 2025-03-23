@@ -1,0 +1,10 @@
+Verbal Comprehension Enhancement Training Module Log
+Started at: 21-Mar-2025 21:59:04
+
+Loading enhanced task data...
+Loaded enhanced similarities data: 25 items
+Loaded enhanced vocabulary data: 25 items
+Loaded enhanced information data: 25 items
+Beginning pre-test assessment...
+Pre-test was exited early at: Similarities question 1
+Program terminated by user request.
